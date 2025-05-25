@@ -11,14 +11,24 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/vidyantTechnology', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}).then(() => {
-    console.log('Connected to MongoDB successfully');
-}).catch((err) => {
-    console.error('MongoDB connection error:', err);
-});
+const connectWithRetry = async () => {
+    console.log('Attempting to connect to MongoDB...');
+    try {
+        await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/vidyantTechnology', {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            serverSelectionTimeoutMS: 15000, // Timeout after 15 seconds instead of 30
+            socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
+        });
+        console.log('Connected to MongoDB successfully');
+    } catch (err) {
+        console.error('MongoDB connection error:', err);
+        console.log('Retrying connection in 5 seconds...');
+        setTimeout(connectWithRetry, 5000);
+    }
+};
+
+connectWithRetry();
 
 // Handle contact form submissions
 app.post('/api/contact', async (req, res) => {
