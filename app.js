@@ -14,11 +14,16 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const connectWithRetry = async () => {
     console.log('Attempting to connect to MongoDB...');
     try {
-        await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/vidyantTechnology', {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
+        // For production (like Render), use Atlas directly if MONGODB_URI isn't set
+        const MONGODB_ATLAS_URI = 'mongodb+srv://vidyant:vidyant1234@cluster0.dw1lch9.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+        const connectionString = process.env.MONGODB_URI || (process.env.NODE_ENV === 'production' ? MONGODB_ATLAS_URI : 'mongodb://localhost:27017/vidyantTechnology');
+        
+        console.log('Connecting to MongoDB at: ' + connectionString.replace(/mongodb\+srv:\/\/([^:]+):[^@]+@/, 'mongodb+srv://$1:****@'));
+        
+        await mongoose.connect(connectionString, {
             serverSelectionTimeoutMS: 15000, // Timeout after 15 seconds instead of 30
             socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
+            // Remove deprecated options
         });
         console.log('Connected to MongoDB successfully');
     } catch (err) {
