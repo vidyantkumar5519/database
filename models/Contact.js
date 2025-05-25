@@ -20,7 +20,8 @@ const contactSchema = new mongoose.Schema({
     subject: {
         type: String,
         required: true,
-        enum: ['General Inquiry', 'Service Inquiry', 'Product Inquiry', 'Partnership']
+        // Adding 'API Test' to allowed subjects
+        enum: ['General Inquiry', 'Service Inquiry', 'Product Inquiry', 'Partnership', 'API Test']
     },
     message: {
         type: String,
