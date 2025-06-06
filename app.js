@@ -20,7 +20,7 @@ const connectWithRetry = async () => {
         // For production (like Render), use Atlas directly if MONGODB_URI isn't set
         // Note: You should set MONGO_USERNAME and MONGO_PASSWORD environment variables in Render
         const username = process.env.MONGO_USERNAME || 'vidyant';
-        const password = process.env.MONGO_PASSWORD || 'vidyant1234@';
+        const password = process.env.MONGO_PASSWORD || 'vidyant1234%40';
         const MONGODB_ATLAS_URI = `mongodb+srv://${username}:${password}@cluster0.dw1lch9.mongodb.net/vidyantTechnology?retryWrites=true&w=majority&appName=Cluster0`;
         const connectionString = process.env.MONGODB_URI || (process.env.NODE_ENV === 'production' ? MONGODB_ATLAS_URI : 'mongodb://localhost:27017/vidyantTechnology');
         
